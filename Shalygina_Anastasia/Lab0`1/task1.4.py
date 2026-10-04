@@ -1,11 +1,8 @@
-#Напишите программу, с помощью которой можно превратить числовую последовательность, заданную пользователем,
-# по выбранному вами шифру в буквенный текст и наоборот.
-
 #!/usr/bin/env python3
-slovar_bukv: dict = { 'б':'54','в':'38','г':'52','д':'94','е':'9', 'ё':'11','ж':'71','з':'48','и':'2','й':'95','к':'63','л':'75',
+SLOVAR_BUKV: dict = { 'б':'54','в':'38','г':'52','д':'94','е':'9', 'ё':'11','ж':'71','з':'48','и':'2','й':'95','к':'63','л':'75',
 'м':'74','н':'64','о':'93','п':'18','р':'59','с':'72','т':'8','у':'3','ф':'88','х':'96','ц':'30','ч':'50','ш':'19','щ':'83',
 'ъ':'86','ы':'57','ь':'45','э':'44','ю':'89','я':'77','а':'0'}
-slovar_cifr = {
+SLOVAR_CIRF = {
     '0': 'а', '54': 'б', '38': 'в', '52': 'г', '94': 'д', '9': 'е', '11': 'ё',
     '71': 'ж', '48': 'з', '2': 'и', '95': 'й', '63': 'к', '75': 'л', '74': 'м',
     '64': 'н', '93': 'о', '18': 'п', '59': 'р', '72': 'с', '8': 'т', '3': 'у',
@@ -20,8 +17,8 @@ if __name__ == '__main__':
     result_text = []
 
     for char in text:
-        if char in slovar_bukv:
-            result_text.append(slovar_bukv[char])
+        if char in SLOVAR_BUKV:
+            result_text.append(SLOVAR_BUKV[char])
         elif char == ' ':
             result_text.append('/')
         else:
@@ -32,8 +29,8 @@ if __name__ == '__main__':
     cifra: str = input('Введите зашифрованный текст (числа через пробел, слова через /)\n')
     result_cifra = []
     for chaar in cifra.split():
-        if chaar in slovar_cifr:
-            result_cifra.append(slovar_cifr[chaar])
+        if chaar in SLOVAR_CIRF:
+            result_cifra.append(SLOVAR_CIRF[chaar])
         elif chaar == '/':
             result_cifra.append(' ')
         else:result_cifra.append(chaar)
