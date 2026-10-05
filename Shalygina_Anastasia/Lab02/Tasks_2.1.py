@@ -2,8 +2,7 @@
 
 STANDARD_DELIMITED: str = ', '
 
-if __name__ == '__main__':
-    def main(strings):
+def main(strings):
         try:
             total_length = 0
             for s in strings:
@@ -18,6 +17,7 @@ if __name__ == '__main__':
             print("Список не должен быть пустым!")
             return []
 
+if __name__ == '__main__':
     user_word = input(f'Введите слова, используя "{STANDARD_DELIMITED}"\n ')
     words = user_word.split(STANDARD_DELIMITED)
     print(main(words))
