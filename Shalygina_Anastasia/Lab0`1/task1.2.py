@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-courses = ('ВышМат', 'Физика', 'Программирование', 'История', 'Ботаника')
+COURSES = ('ВышМат', 'Физика', 'Программирование', 'История', 'Ботаника')
 
 if __name__ == '__main__':
     students = {}
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
         students[name] = {}
 
-        for course in courses:
+        for course in COURSES:
             while True:
                 try:
                     score = int(input(f"Введите целое число от 3 до 5 {course}: "))
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         sr_score = sum(all_scores)/len(all_scores)
         min_score = min(all_scores)
         max_score = max(all_scores)
-        
+
         print("--" *40)
         print(f'Всего оценок выставлено: {len(all_scores)}')
         print(f'Средний балл по всем студентам: {sr_score}')
