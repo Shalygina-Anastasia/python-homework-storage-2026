@@ -15,7 +15,7 @@ def main(*args):
         print('Типы данных, которые Вы ввели:')
         for arg in args:
             print(f"{arg} - тип: {type(arg).__name__}")
-        return None
+        return
 
     
 if __name__ == '__main__':
