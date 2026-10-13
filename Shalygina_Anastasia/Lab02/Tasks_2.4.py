@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
-VOWELS = "уеёыаоэяиюЁУЕЫАОЭЯИЮ"
+
+VOWELS = "уеёыаоэяию"
 
 def count_vowels(text):
+    text = text.lower()
     count = 0
     for char in text:
         if char in VOWELS:
             count += 1
     return count
+
+
 def main(**kwargs):
     result = {}
     for key, value in kwargs.items():
@@ -16,6 +20,7 @@ def main(**kwargs):
             if vowels_count >= 3:
                 result[key] = value
     return result
+
 
 if __name__ == "__main__":
     print ("Проверка 1: Разные типы данных")
