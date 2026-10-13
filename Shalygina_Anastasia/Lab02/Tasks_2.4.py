@@ -3,6 +3,7 @@
 
 VOWELS = "уеёыаоэяию"
 
+
 def count_vowels(text):
     text = text.lower()
     count = 0
