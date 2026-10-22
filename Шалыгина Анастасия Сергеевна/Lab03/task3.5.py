@@ -37,3 +37,4 @@ def square(n):
 if __name__ == '__main__':
     res = square(3)
     print(res)
+    
