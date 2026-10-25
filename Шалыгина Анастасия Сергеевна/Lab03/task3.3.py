@@ -4,9 +4,11 @@
 import random
 
 
-def main():
+def generate_and_filter_numbers():
     """
     Функция принимает список из случайно сгенерированных чисел в диапазоне от -100 до 100 и фильтрует по трем условиям
+
+    :return: None (Функция только выводит результаты, но ничего не возвращает)
     """
     numbers = [random.randint(-100, 100) for i in range(20)]
     print(f'Исходный список ({len(numbers)}): {numbers}')
@@ -19,4 +21,4 @@ def main():
     print(f' Оба условия одновременно: \n Список: {filter_3}, \n Длина списка: {len(filter_3)}')
 
 if __name__ == '__main__':
-    main()
+    generate_and_filter_numbers()
