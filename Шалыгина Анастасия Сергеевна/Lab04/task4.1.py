@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 
+
+SPEED_LIMIT = 120
+DEFAULT_COST_PER_KG = 50.0
+
 class Transport:
     """
     Базовый класс для всех видов транспорта
 
     Хранит приватные переменные скорости и ёмкости
     """
-    SPEED_LIMIT: int = 120
+
     def __init__(self, speed, capacity):
         """
         Инициализирует транспортное средство
@@ -15,6 +19,8 @@ class Transport:
         :param capacity: Вместимость транспорта
         :return: Ничего не возвращает, инициализирует объект
         """
+        self._speed = None
+        self._capacity = None
         self.speed = speed
         self.capacity = capacity
 
@@ -24,20 +30,20 @@ class Transport:
         Возвращает текущую скорость транспорта
         :return: Скорость в км/ч
         """
-        return self.__speed
+        return self._speed
 
     @speed.setter
     def speed(self, value):
         """
         Устанавливает скорость
         :param value: Новое значение скорости
-        :return: Ничего не возвращает, изменяет приватную переменную __speed
+        :return: Ничего не возвращает, изменяет защищенную переменную _speed
         """
-        if not isinstance(value, int):
+        if type(value) is not int:
             raise TypeError(f"Скорость может быть только целой циферкой!! Получено: {type(value).__name__}")
         if value < 0:
             raise ValueError(f"Внимание! Задний ход задается не отрицательным значением: {value}")
-        self.__speed = value
+        self._speed = value
 
     @property
     def capacity(self):
@@ -45,22 +51,22 @@ class Transport:
         Возвращает текущую ёмкость транспорта
         :return: Вместимость
         """
-        return self.__capacity
+        return self._capacity
 
     @capacity.setter
     def capacity(self, value):
         """
         Устанавливает новую ёмкость
         :param value: Новое значение ёмкости
-        :return: Ничего не возвращает, изменяет приватную переменную __capacity
+        :return: Ничего не возвращает, изменяет защищенную переменную _capacity
         """
-        if not isinstance(value, int):
+        if type(value) is not int:
             raise TypeError(f"Ёмкость должна быть целым числом! Было получено: {type(value).__name__}")
         if value <= 0:
             raise ValueError(f"Ёмкость должна быть положительной! А было получено: {value}")
-        self.__capacity = value
+        self._capacity = value
 
-    def get_info(self):
+    def __str__(self):
         """
         Возвращает строку с основными характеристиками транспорта
         :return:Строка со скоростью и ёмкостью
@@ -73,19 +79,21 @@ class Transport:
         :param limit: Порог скорости для сравнения, если не указан используется SPEED_LIMIT (120 км/ч)
         :return: True, если скорость превышает порог, иначе False
         """
-        doorstep = limit if limit is not None else self.SPEED_LIMIT
+        doorstep = limit if limit is not None else SPEED_LIMIT
         return self.speed > doorstep
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data_dict):
         """
         Создает объект транспорта из словаря
-        :param data: словарь с ключами 'speed' и 'capacity'
+        :param data_dict: словарь с ключами 'speed' и 'capacity'
         :return: Новый объект транспорта
         """
-        if "speed" not in data or "capacity" not in data:
+        speed = data_dict.get('speed')
+        capacity = data_dict.get('capacity')
+        if speed is None or capacity is None:
             raise KeyError("Словарь должен содержать хоть какие-то ключи 'speed' и 'capacity'")
-        return cls(speed=data["speed"], capacity = data["capacity"])
+        return cls(speed=speed, capacity = capacity)
 
 class Bus(Transport):
     """
@@ -101,6 +109,7 @@ class Bus(Transport):
         :return: Ничего не возвращает, инициализирует объект
         """
         super().__init__(speed, capacity)
+        self._route = None
         self.route = route
 
     @property
@@ -109,20 +118,20 @@ class Bus(Transport):
         Возвращает маршрут автобуса
         :return: Название маршрута
         """
-        return self.__route
+        return self._route
 
     @route.setter
     def route(self, value):
         """
         Устанавливает маршрут
         :param value: Новый маршрут
-        :return: Ничего не возвращает, изменяет приватную переменную __route
+        :return: Ничего не возвращает, изменяет защищенную переменную _route
         """
-        if not isinstance(value, str) or not value.strip():
+        if type(value) is not str or not value.strip():
             raise ValueError ("Маршрут не может быть пустым...")
-        self.__route = value.strip()
+        self._route = value.strip()
 
-    def get_info(self):
+    def __str__(self):
         """
         Возвращает строку с характеристикой автобуса
         :return: Строка содержащая информацию о скорости, вместимости и маршрута автобуса
@@ -133,7 +142,6 @@ class Truck(Transport):
     """
     Класс грузовик. Наследует Transport и добавляет грузоподъёмность
     """
-    DEFAULT_COST_PER_KG = 50.0
 
     def __init__(self, speed, capacity, max_load):
         """
@@ -144,6 +152,7 @@ class Truck(Transport):
         :return: Ничего не возвращает, инициализирует объект
         """
         super().__init__(speed, capacity)
+        self._max_load = None
         self.max_load = max_load
 
     @property
@@ -152,20 +161,20 @@ class Truck(Transport):
         Возвращает грузоподъемность грузовика
         :return: Максимальный вес груза в кг
         """
-        return self.__max_load
+        return self._max_load
 
     @max_load.setter
     def max_load(self, value):
         """
         Устанавливает грузоподъёмность
         :param value: Новое значение грузоподъемности
-        :return: Ничего не возвращает, изменяет приватную переменную __max_load
+        :return: Ничего не возвращает, изменяет защищенную переменную _max_load
         """
-        if not isinstance(value, float):
+        if type(value) not in(int, float):
             raise TypeError(f"Грузоподъемность должна быть числом, а Вы ввели: {type(value).__name__}")
         if value <= 0:
             raise ValueError ("Вы должны хоть положить что-то, а не красть машину........")
-        self.__max_load = float(value)
+        self._max_load = float(value)
 
     def calculate_price_transit(self, weight):
         """
@@ -177,9 +186,9 @@ class Truck(Transport):
             raise ValueError ("Напомним, красть машину не хорошо... Положите что-то в нее")
         if weight > self.max_load:
             raise ValueError (f"Машинка не может увезти столько. Ваш вес товара: {weight} кг, а машинка может принять только: {self.max_load}кг")
-        return weight * self.DEFAULT_COST_PER_KG
+        return weight * DEFAULT_COST_PER_KG
 
-    def get_info(self):
+    def __str__(self):
         """
         Возвращает строку с характеристикой грузовика
         :return: Строка, содержащая информацию о скорости, вместимости и грузоподъемности грузовика
@@ -197,6 +206,7 @@ class Taxi(Transport):
         :return: Ничего не возвращает, инициализирует объект
         """
         super().__init__(speed, capacity)
+        self._rate_per_km = None
         self.rate_per_km = rate_per_km
 
     @property
@@ -205,20 +215,20 @@ class Taxi(Transport):
         Возвращает тариф за километр
         :return: Стоимость одного километра в рублях
         """
-        return self.__rate_per_km
+        return self._rate_per_km
 
     @rate_per_km.setter
     def rate_per_km(self, value):
         """
         Устанавливает тариф
         :param value: Новый тариф
-        :return: Ничего не возвращает, изменяет приватную переменную __rate_per_km
+        :return: Ничего не возвращает, изменяет защищенную переменную _rate_per_km
         """
-        if not isinstance(value, float):
-            raise TypeError (f"Тариф должен быть числом, а было получн: {type(value).__name__}")
+        if type(value) not in (int, float):
+            raise TypeError (f"Тариф должен быть числом, а было получен: {type(value).__name__}")
         if value < 0:
             raise ValueError ("Тариф не может быть отрицательным!!")
-        self.__rate_per_km = float(value)
+        self._rate_per_km = float(value)
 
     def calculate_price_tax(self, distance):
         """
@@ -230,25 +240,25 @@ class Taxi(Transport):
             raise ValueError ("Расстояние не может быть отрицательным!")
         return distance * self.rate_per_km
 
-    def get_info(self):
+    def __str__(self):
         """
         Возвращает строку с характеристиками такси
         :return: Строка, содержащая информацию о скорости, вместимости и тарифом такси
         """
-        return f"Taxi: Скорость = {self.speed}км/ч, емкость = {self.capacity}, ставка в час = {self.rate_per_km} руб/км"
+        return f"Taxi: Скорость = {self.speed}км/ч, емкость = {self.capacity}, ставка за км = {self.rate_per_km} руб/км"
 
 
 if __name__ == '__main__':
-    bus = Bus(speed = 60, capacity = 50, route = "Санкт-Петербург - Петрозаводск")
-    truck = Truck(speed = 80, capacity = 2, max_load = 100.0)
-    taxi = Taxi(speed = 90, capacity = 4, rate_per_km = 35.0)
-    print(bus.get_info())
-    print(truck.get_info())
-    print(taxi.get_info())
+    bus = Bus(speed=60, capacity=50, route="Санкт-Петербург - Петрозаводск")
+    truck = Truck(speed=80, capacity=2, max_load=100.0)
+    taxi = Taxi(speed=90, capacity=4, rate_per_km=35.0)
+    print(bus)
+    print(truck)
+    print(taxi)
 
     data = {"speed": 60, "capacity": 2}
     transport = Transport.from_dict(data)
-    print(f"Создали из словаря: {transport.get_info()}")
+    print(f"Создали из словаря: {transport}")
 
     invalid_cases = [("Отрицательная скорость", lambda: Transport(speed = -10, capacity = 5)),
                       ("Скорость не int", lambda: Transport(speed = 'fast', capacity = 5)),
@@ -257,15 +267,15 @@ if __name__ == '__main__':
     for description, action in invalid_cases:
         try:
             action()
-            print(f"{description}: возникла ОШИБКА!!!!!!")
-        except (ValueError, TypeError):
-            print("Все отработано корректно! Ошибки были перехвачены")
+            print(f"{description}: ошибка не возникла")
+        except (ValueError, TypeError) as e:
+            print(f"{description}: перехвачено → {e}")
 
-    print(f"Максимальная скорость у транспорта: {Transport.SPEED_LIMIT}")
-    print(f"Стоимость перевозки за кг у грузовика: {Truck.DEFAULT_COST_PER_KG}")
+    print(f"Максимальная скорость у транспорта: {SPEED_LIMIT}")
+    print(f"Стоимость перевозки за кг у грузовика: {DEFAULT_COST_PER_KG}")
 
-    new_transport = Transport.from_dict ({"speed":55, "capacity":5})
-    print(f"Был создан через словарь без экземпляра: {new_transport.get_info()}")
+    new_transport = Transport.from_dict({"speed":55, "capacity":5})
+    print(f"Был создан через словарь без экземпляра: {new_transport}")
 
     alls = [
         Bus(speed= 60, capacity= 40, route= "Маршрут №1"),
@@ -274,7 +284,7 @@ if __name__ == '__main__':
         Bus(speed= 50, capacity= 50, route= "Маршрут №2")
     ]
     for vehicle in alls:
-        print(f"{vehicle.get_info()}")
+        print(f"{vehicle}")
 
     for vehicle in alls:
         excess = vehicle.check_speed()
@@ -282,8 +292,8 @@ if __name__ == '__main__':
 
     for vehicle in alls:
         if isinstance(vehicle, Truck):
-            cost = vehicle.calculate_price_transit(weight = 1000.0)
-            print(f"{vehicle.__class__.__name__}: перевозка 1000 кг = {cost} руб.")
+            cost = vehicle.calculate_price_transit(weight=1000.0)
+            print(f"  {vehicle.__class__.__name__}: перевозка 1000 кг = {cost} руб.")
         elif isinstance(vehicle, Taxi):
-            cost = vehicle.calculate_price_tax(distance = 30.0)
-            print(f"{vehicle.__class__.__name__}: стоимость поездки в 30 км = {cost} руб")
+            cost = vehicle.calculate_price_tax(distance=30.0)
+            print(f"  {vehicle.__class__.__name__}: стоимость поездки 30 км = {cost} руб.")
