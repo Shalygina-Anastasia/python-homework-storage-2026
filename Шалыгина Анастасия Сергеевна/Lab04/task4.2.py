@@ -14,9 +14,10 @@ class BankAccount:
         :param initial_balance: Начальный баланс
         :return: Ничего не возвращает, создает объект счета с заданными параметрами
         """
-        self.__owner = owner
-        self.__balance = 0.0
-        self.__history = []
+        self._owner = None
+        self._owner = owner
+        self._balance = 0.0
+        self._history = []
 
         if initial_balance > 0:
             self.deposit(initial_balance, "Начальный взнос")
@@ -27,7 +28,17 @@ class BankAccount:
         Возвращает текущий баланс счета
         :return: Текущий баланс счета
         """
-        return self.__balance
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        """
+        Запрещает прямое изменение баланса
+
+        :param value: Новое значение баланса
+        :return: Новое значение баланса
+        """
+        raise AttributeError("Баланс изменять нельзя! Если все таки хотите - воспользуйтесь методами deposit() или conclusion()")
 
     @property
     def owner(self):
@@ -35,7 +46,17 @@ class BankAccount:
         Возвращает имя владельца счет
         :return: Имя владельца счета
         """
-        return self.__owner
+        return self._owner
+
+    @owner.setter
+    def owner(self, value):
+        """
+        Запрещает прямое изменение имени владельца
+
+        :param value: Новое имя владельца
+        :return: Ничего не возвращает, выбрасывает исключение при попытке изменения
+        """
+        raise AttributeError("Имя владельца нельзя изменять!")
 
     @property
     def history(self):
@@ -43,7 +64,17 @@ class BankAccount:
         Возвращает копию истории транзакции
         :return: Копия списка словарей с историей операций
         """
-        return self.__history.copy()
+        return self._history.copy()
+
+    @history.setter
+    def history(self, value):
+        """
+        Запрещает прямое изменение истории транзакции
+
+        :param value: Новое значение истории
+        :return: Ничего не возвращает, выбрасывает исключение при попытке изменения
+        """
+        raise AttributeError("Историю транзакции нельзя изменить! Она формируется автоматически...")
 
     def deposit(self, amount, description = "Пополнение"):
         """
@@ -56,9 +87,9 @@ class BankAccount:
             raise TypeError (f"Сумма внесения должна быть числом!!! Было получено: {type(amount).__name__}")
         if amount <= 0:
             raise ValueError ("Сумма должна быть положительной!")
-        self.__balance += amount
+        self._balance += amount
         self.add_to_history("Пополнение", amount, description)
-        print(f"Было выполнено пополнение: +{amount}руб. (баланс: {self.__balance}руб.)")
+        print(f"Было выполнено пополнение: +{amount}руб. (баланс: {self._balance}руб.)")
 
     def conclusion(self, amount, description = "Снятие"):
         """
@@ -67,17 +98,17 @@ class BankAccount:
         :param description: Текстовое описание операции
         :return: Ничего не возвращает, уменьшает баланс и добавляет запись в историю
         """
-        if not isinstance(amount, float|int):
+        if type(amount) not in (int, float):
             raise TypeError(f"Сумма должна быть числом! Было получено: {type(amount).__name__}")
         if amount <= 0:
             raise ValueError("Сумма должна быть положительной")
-        if amount > self.__balance:
-            raise ValueError(f"Ошибка! У Вас нет столько денег! Было запрошено: {amount}, баланс: {self.__balance}")
+        if amount > self._balance:
+            raise ValueError(f"Ошибка! У Вас нет столько денег! Было запрошено: {amount}, баланс: {self._balance}")
 
-        self.__balance -= amount
+        self._balance -= amount
         self.add_to_history("Снятие", amount, description)
 
-        print(f"Снятие: {amount}руб. (баланс: {self.__balance}руб.)")
+        print(f"Снятие: {amount}руб. (баланс: {self._balance}руб.)")
 
     def add_to_history(self, operation_type, amount, description):
         """
@@ -91,9 +122,9 @@ class BankAccount:
             "type" : operation_type,
             "amount" : amount   ,
             "description" : description,
-            "balans_after": self.__balance
+            "balance_after": self._balance
         }
-        self.__history.append(record)
+        self._history.append(record)
 
     @classmethod
     def create_account(cls, owner, initial_balance = 0.0):
@@ -126,7 +157,8 @@ class SavingAccount(BankAccount):
         :return: Ничего не возвращает, создаёт объект сберегательного счета
         """
         super().__init__(owner, initial_balance)
-        self.__interest_rate = interest_rate
+        self._interest_rate = None
+        self._interest_rate = interest_rate
 
     @property
     def interest_rate(self):
@@ -134,7 +166,7 @@ class SavingAccount(BankAccount):
         Возвращает текущую процентную ставку
         :return: Процентная ставка
         """
-        return self.__interest_rate
+        return self._interest_rate
 
     def add_interest(self):
         """
@@ -170,8 +202,19 @@ class SavingAccount(BankAccount):
         return cls(owner, initial_balance, interest_rate)
 
 if __name__ == "__main__":
-    account1 = BankAccount.create_account("Иванов Валера", 1000.0)
-    account2 = SavingAccount.create_account("Сидоров Иван", 5000.0, 5.0)
+
+    accounts = []
+
+    try:
+        accounts = [
+            BankAccount.create_account("Тест1", 1000.0),
+            SavingAccount.create_account("Тест2", 1000.0, 3.0)
+        ]
+    except ValueError as e:
+        print(f"Ошибка при создании счетов: {e}")
+
+    account1 = BankAccount.create_account("Тест1", 1000.0)
+    account2 = SavingAccount.create_account("Тест2", 1000.0, 3.0)
 
     account1.deposit(500.0, "Зарплата")
     account1.conclusion(200.0, "Покупки")
@@ -192,10 +235,10 @@ if __name__ == "__main__":
     except AttributeError as e:
         print(e)
 
-    for record in account1.history:
-        print(f"{record['type']}: {record['amount']}руб. ({record['description']}) -> баланс: {record['balans_after']}руб.")
-
-    accounts = [
+    for entry in account1.history:
+        print(f"{entry.get('type')}: {entry.get('amount')} руб. ({entry.get('description')}) -> баланс: {entry.get('balance_after')} руб.")
+        
+        accounts = [
         BankAccount.create_account("Тест1", 1000.0),
         SavingAccount.create_account("Тест2", 1000.0, 3.0)
 
